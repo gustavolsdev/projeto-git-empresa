@@ -1,9 +1,23 @@
-name: Teste
+name: Deploy Docker
 
-on: [push]
+on:
+  push:
+    branches:
+      - master
 
 jobs:
-  teste:
+  build:
     runs-on: ubuntu-latest
+
     steps:
-      - run: echo "Funcionando 🚀"
+      - name: Checkout código
+        uses: actions/checkout@v3
+
+      - name: Login Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USER }}" --password-stdin
+
+      - name: Build imagem
+        run: docker build -t gustavolsdevops/meu-site:latest .
+
+      - name: Push imagem
+        run: docker push gustavolsdevops/meu-site:latest
